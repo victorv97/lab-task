@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinLengthValidator
 
 
 STATUSES = (
@@ -9,14 +10,20 @@ STATUSES = (
 
 
 class User(models.Model):
-    first_name = models.CharField(max_length=32)
+    first_name = models.CharField(max_length=32, blank=False)
     last_name = models.TextField(max_length=64, blank=True)
-    username = models.CharField(max_length=32)
-    password = models.CharField(max_length=128)
+    username = models.CharField(max_length=32, blank=False)
+    password = models.CharField(
+        max_length=128,
+        blank=False,
+        validators=[
+            MinLengthValidator(6, 'The field must contain at least 6 characters')
+        ]
+    )
 
 
 class Task(models.Model):
-    title = models.CharField(max_length=64)
-    description = models.TextField(max_length=1024, blank=False)
+    title = models.CharField(max_length=64, blank=False)
+    description = models.TextField(max_length=1024, blank=True)
     status = models.IntegerField(choices=STATUSES)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
