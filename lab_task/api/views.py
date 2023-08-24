@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
 from todo_list.models import Task, User
 from .serializers import TaskSerializer
 
@@ -20,8 +21,8 @@ def get_user_task_list(request, user_id):
 
 @api_view(['GET'])
 def get_task(request, task_id):
-    tasks = Task.objects.all().filter(id=task_id)
-    serializer = TaskSerializer(tasks, many=True)
+    task = get_object_or_404(Task, id=task_id)
+    serializer = TaskSerializer(task)
     return Response(serializer.data)
 
 
@@ -35,7 +36,7 @@ def create_task(request):
 
 @api_view(['POST'])
 def update_task(request, task_id):
-    task = Task.objects.get(id=task_id)
+    task = get_object_or_404(Task, id=task_id)
     serializer = TaskSerializer(instance=task, data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -44,6 +45,6 @@ def update_task(request, task_id):
 
 @api_view(['DELETE'])
 def delete_task(request, task_id):
-    task = Task.objects.get(id=task_id)
+    task = get_object_or_404(Task, id=task_id)
     task.delete()
     return Response(f'Task {task_id} successfully deleted')
