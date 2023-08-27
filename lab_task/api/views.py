@@ -1,8 +1,10 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework import status
 from django.shortcuts import get_object_or_404
 from todo_list.models import Task, User
-from .serializers import TaskSerializer
+from .serializers import TaskSerializer, UserSerializer
 
 
 @api_view(['GET'])
@@ -31,7 +33,7 @@ def create_task(request):
     serializer = TaskSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -48,3 +50,13 @@ def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     task.delete()
     return Response(f'Task {task_id} successfully deleted')
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny,])
+def signup(request):
+    serializer = UserSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)

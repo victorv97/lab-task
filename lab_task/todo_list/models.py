@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import MinLengthValidator
 
 
@@ -9,10 +10,21 @@ STATUSES = (
 )
 
 
-class User(models.Model):
+class UserManager(BaseUserManager):
+
+    use_in_migration = True
+
+    def create_user(self, password=None, **extra_fields):
+        user = self.model(**extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractUser):
     first_name = models.CharField(max_length=32, blank=False)
     last_name = models.TextField(max_length=64, blank=True)
-    username = models.CharField(max_length=32, blank=False)
+    username = models.CharField(max_length=32, unique=True, blank=False)
     password = models.CharField(
         max_length=128,
         blank=False,
@@ -20,6 +32,7 @@ class User(models.Model):
             MinLengthValidator(6, 'The field must contain at least 6 characters')
         ]
     )
+    objects = UserManager()
 
 
 class Task(models.Model):
