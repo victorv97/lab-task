@@ -40,3 +40,6 @@ class Task(models.Model):
     description = models.TextField(max_length=1024, blank=True)
     status = models.IntegerField(choices=tuple(STATUSES.values()))
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['id']  # to avoid UnorderedObjectListWarning
