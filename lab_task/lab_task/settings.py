@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "todo_list",
+    "django_filters",
 ]
 
 MIDDLEWARE = [

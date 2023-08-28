@@ -111,20 +111,18 @@ class TaskAPITestCase(APITestCase):
         sample_data = {
             'title': 'updated test title',
             'description': 'updated description',
-            'status': STATUSES[0][0],
-            'user_id': self.test_user.id
         }
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
         response = self.client.post(self.update_task_url, sample_data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], sample_data['title'])
+        self.assertEqual(response.data['description'], sample_data['description'])
 
     def test_update_task_unauthorized(self):
         sample_data = {
             'title': 'updated test title by unauthorized',
             'description': 'updated description',
-            'status': STATUSES[0][0],
-            'user_id': self.test_user.id
         }
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header_fake)
         response = self.client.post(self.update_task_url, sample_data)
@@ -135,8 +133,6 @@ class TaskAPITestCase(APITestCase):
         sample_data = {
             'title': 'updated test title by other user',
             'description': 'updated description',
-            'status': STATUSES[0][0],
-            'user_id': self.test_user.id
         }
         other_user = User.objects.create_user(
             first_name='other',

@@ -5,6 +5,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from todo_list.models import Task, User
 from .serializers import TaskSerializer, UserSerializer
+from .filters import TaskFilter
 
 
 #  -------------------------------------------------------------------------------------
@@ -13,6 +14,9 @@ from .serializers import TaskSerializer, UserSerializer
 @api_view(['GET'])
 def get_task_list(request):
     tasks = Task.objects.all()
+    filter_set = TaskFilter(request.GET, queryset=tasks)
+    if filter_set.is_valid():
+        tasks = filter_set.qs
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
 
@@ -20,6 +24,9 @@ def get_task_list(request):
 @api_view(['GET'])
 def get_user_task_list(request, user_id):
     tasks = Task.objects.all().filter(user_id=user_id)
+    filter_set = TaskFilter(request.GET, queryset=tasks)
+    if filter_set.is_valid():
+        tasks = filter_set.qs
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
 
@@ -42,7 +49,7 @@ def create_task(request):
 @api_view(['POST'])
 def update_task(request, task_id):
     task = get_object_or_404(Task, id=task_id, user_id=request.user.id)
-    serializer = TaskSerializer(instance=task, data=request.data)
+    serializer = TaskSerializer(instance=task, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -60,12 +67,11 @@ def delete_task(request, task_id):
 #  -------------------------------------------------------------------------------------
 @api_view(['POST'])
 def mark_completed_task(request, task_id):
-    pass
-
-
-@api_view(['GET'])
-def filter_tasks_by_status(request):
-    pass
+    task = get_object_or_404(Task, id=task_id)
+    serializer = TaskSerializer(instance=task, data={'status': 2}, partial=True)
+    if serializer.is_valid():
+        serializer.update(instance=task, validated_data=serializer.validated_data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 #  -------------------------------------------------------------------------------------
