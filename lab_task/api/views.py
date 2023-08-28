@@ -7,6 +7,9 @@ from todo_list.models import Task, User
 from .serializers import TaskSerializer, UserSerializer
 
 
+#  -------------------------------------------------------------------------------------
+#  CRUD operations
+#  -------------------------------------------------------------------------------------
 @api_view(['GET'])
 def get_task_list(request):
     tasks = Task.objects.all()
@@ -38,21 +41,36 @@ def create_task(request):
 
 @api_view(['POST'])
 def update_task(request, task_id):
-    task = get_object_or_404(Task, id=task_id)
+    task = get_object_or_404(Task, id=task_id, user_id=request.user.id)
     serializer = TaskSerializer(instance=task, data=request.data)
     if serializer.is_valid():
         serializer.save()
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['DELETE'])
 def delete_task(request, task_id):
-    task = get_object_or_404(Task, id=task_id)
+    task = get_object_or_404(Task, id=task_id, user_id=request.user.id)
     task.delete()
-    return Response(f'Task {task_id} successfully deleted')
+    return Response(f'Task {task_id} successfully deleted', status=status.HTTP_200_OK)
 
 
+#  -------------------------------------------------------------------------------------
+#  Other API endpoints
+#  -------------------------------------------------------------------------------------
+@api_view(['POST'])
+def mark_completed_task(request, task_id):
+    pass
 
+
+@api_view(['GET'])
+def filter_tasks_by_status(request):
+    pass
+
+
+#  -------------------------------------------------------------------------------------
+#  Authorization
+#  -------------------------------------------------------------------------------------
 @api_view(['POST'])
 @permission_classes([AllowAny,])
 def signup(request):
