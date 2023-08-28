@@ -3,11 +3,11 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import MinLengthValidator
 
 
-STATUSES = (
-    (0, 'New'),
-    (1, 'In Progress'),
-    (2, 'Completed'),
-)
+STATUSES = {
+    'NEW': (0, 'New'),
+    'IN_PROGRESS': (1, 'In Progress'),
+    'COMPLETED': (2, 'Completed'),
+}
 
 
 class UserManager(BaseUserManager):
@@ -38,5 +38,5 @@ class User(AbstractUser):
 class Task(models.Model):
     title = models.CharField(max_length=64, blank=False)
     description = models.TextField(max_length=1024, blank=True)
-    status = models.IntegerField(choices=STATUSES)
+    status = models.IntegerField(choices=tuple(STATUSES.values()))
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -17,9 +17,9 @@ class TaskAPITestCase(APITestCase):
         )
 
         self.test_tasks = (
-            Task.objects.create(title='test title 1', description='', status=STATUSES[0][0], user_id=self.test_user),
-            Task.objects.create(title='test title 2', description='', status=STATUSES[1][0], user_id=self.test_user),
-            Task.objects.create(title='test title 3', description='', status=STATUSES[2][0], user_id=self.test_user),
+            Task.objects.create(title='test title 1', description='', status=STATUSES['NEW'][0], user_id=self.test_user),
+            Task.objects.create(title='test title 2', description='', status=STATUSES['IN_PROGRESS'][0], user_id=self.test_user),
+            Task.objects.create(title='test title 3', description='', status=STATUSES['COMPLETED'][0], user_id=self.test_user),
         )
 
         self.task_list_url = reverse('task-list')
@@ -28,6 +28,7 @@ class TaskAPITestCase(APITestCase):
         self.create_task_url = reverse('create-task')
         self.update_task_url = reverse('update-task', args=(self.test_tasks[1].id,))
         self.delete_task_url = reverse('delete-task', args=(self.test_tasks[2].id,))
+        self.mark_task_url = reverse('mark-completed-task', args=(self.test_tasks[1].id,))
 
         self.login_url = reverse('token_obtain_pair')
 
@@ -83,7 +84,7 @@ class TaskAPITestCase(APITestCase):
         sample_data = {
             'title': 'created test title',
             'description': '',
-            'status': STATUSES[0][0],
+            'status': STATUSES['NEW'][0],
             'user_id': self.test_user.id
         }
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
@@ -99,7 +100,7 @@ class TaskAPITestCase(APITestCase):
         sample_data = {
             'title': 'created test title by unauthorized',
             'description': '',
-            'status': STATUSES[0][0],
+            'status': STATUSES['NEW'][0],
             'user_id': self.test_user.id
         }
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header_fake)
@@ -180,3 +181,27 @@ class TaskAPITestCase(APITestCase):
         response = self.client.delete(self.delete_task_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_mark_completed_task(self):
+        sample_data = {}
+        self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
+        response = self.client.post(self.mark_task_url, sample_data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['status'], STATUSES['COMPLETED'][0])
+
+    def test_mark_completed_task_unauthorized(self):
+        sample_data = {}
+        self.client.credentials(HTTP_AUTHORIZATION=self.auth_header_fake)
+        response = self.client.post(self.mark_task_url, sample_data)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_filter_by_status(self):
+        self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
+        for status_key in STATUSES:
+            status_val = STATUSES[status_key][0]
+            response = self.client.get(self.task_list_url + f'?status={status_val}')
+            queryset = Task.objects.all().filter(status=status_val)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(len(response.data), len(queryset))
