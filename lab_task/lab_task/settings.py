@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,12 +81,12 @@ WSGI_APPLICATION = "lab_task.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        'NAME': 'dbtask',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': os.environ.get('DB_DRIVER', 'django.db.backends.postgresql_psycopg2'),
+        'NAME': os.environ.get('PG_NAME', 'dbtask'),
+        'USER': os.environ.get('PG_USER', 'postgres'),
+        'PASSWORD': os.environ.get('PG_PASSWORD', 'admin'),
+        'HOST': os.environ.get('PG_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('PG_PORT', '5432'),
     }
 }
 
