@@ -5,6 +5,9 @@ from todo_list.models import Task, User, STATUSES
 
 
 class TaskAPITestCase(APITestCase):
+    """
+    Test API endpoints
+    """
 
     def setUp(self):
         password = 'password123'
@@ -44,43 +47,66 @@ class TaskAPITestCase(APITestCase):
         self.auth_header_fake = self.auth_header + 'fake'
 
     def test_get_task_list(self):
+        """
+        Test the access to all tasks list.
+        """
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
         response = self.client.get(self.task_list_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_task_list_unauthorized(self):
+        """
+        Test the access to all tasks list is forbidden for unauthorized users.
+        """
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header_fake)
         response = self.client.get(self.task_list_url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_user_task_list(self):
+        """
+        Test the endpoint returns all tasks of specified user.
+        """
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
         response = self.client.get(self.user_task_list_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_user_task_list_unauthorized(self):
+        """
+        Test the access to specified user's tasks list is forbidden for unauthorized users.
+        """
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header_fake)
         response = self.client.get(self.user_task_list_url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_task(self):
+        """
+        Test the endpoint returns information about a specified task.
+        """
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
         response = self.client.get(self.task_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], self.test_tasks[0].title)
+        self.assertEqual(response.data['description'], self.test_tasks[0].description)
+        self.assertEqual(response.data['status'], self.test_tasks[0].status)
 
     def test_get_task_unauthorized(self):
+        """
+        Test the access to specified task is forbidden for unauthorized users.
+        """
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header_fake)
         response = self.client.get(self.task_url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_task(self):
+        """
+        Test the endpoint creates a new Task and returns information about it.
+        """
         sample_data = {
             'title': 'created test title',
             'description': '',
@@ -97,6 +123,9 @@ class TaskAPITestCase(APITestCase):
         self.assertEqual(response.data['user_id'], sample_data['user_id'])
 
     def test_create_task_task_unauthorized(self):
+        """
+        Test the access to task creation is forbidden for unauthorized users.
+        """
         sample_data = {
             'title': 'created test title by unauthorized',
             'description': '',
@@ -109,6 +138,9 @@ class TaskAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_update_task(self):
+        """
+        Test the endpoint updates the specified task and returns information about it.
+        """
         sample_data = {
             'title': 'updated test title',
             'description': 'updated description',
@@ -121,6 +153,9 @@ class TaskAPITestCase(APITestCase):
         self.assertEqual(response.data['description'], sample_data['description'])
 
     def test_update_task_unauthorized(self):
+        """
+        Test the access to task update is forbidden for unauthorized users.
+        """
         sample_data = {
             'title': 'updated test title by unauthorized',
             'description': 'updated description',
@@ -131,6 +166,9 @@ class TaskAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_update_task_not_found(self):
+        """
+        Test the access to task update is forbidden for other authenticated users.
+        """
         sample_data = {
             'title': 'updated test title by other user',
             'description': 'updated description',
@@ -155,6 +193,9 @@ class TaskAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_task(self):
+        """
+        Test the endpoint deletes the specified task by authenticated owner only.
+        """
         other_user = User.objects.create_user(
             first_name='other 2',
             last_name='user',
@@ -182,6 +223,9 @@ class TaskAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_mark_completed_task(self):
+        """
+        Test the endpoint updates the specified task status as COMPLETED.
+        """
         sample_data = {}
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
         response = self.client.post(self.mark_task_url, sample_data)
@@ -190,6 +234,9 @@ class TaskAPITestCase(APITestCase):
         self.assertEqual(response.data['status'], STATUSES['COMPLETED'][0])
 
     def test_mark_completed_task_unauthorized(self):
+        """
+        Test the access to task update is forbidden for unauthorized users.
+        """
         sample_data = {}
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header_fake)
         response = self.client.post(self.mark_task_url, sample_data)
@@ -197,6 +244,9 @@ class TaskAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_filter_by_status(self):
+        """
+        Test the endpoint filters the task list by each status.
+        """
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
         for status_key in STATUSES:
             status_val = STATUSES[status_key][0]
@@ -208,6 +258,10 @@ class TaskAPITestCase(APITestCase):
 
 
 class AuthAPITestCase(APITestCase):
+    """
+    Test authorization API endpoints
+    """
+
     def setUp(self):
         self.password = 'password123'
         self.client = APIClient()
@@ -223,6 +277,9 @@ class AuthAPITestCase(APITestCase):
         self.refresh_url = reverse('token_refresh')
 
     def test_login(self):
+        """
+        Test the endpoint returns a pair of JWT tokens with access and refresh fields.
+        """
         response = self.client.post(
             self.login_url,
             {
@@ -235,6 +292,9 @@ class AuthAPITestCase(APITestCase):
         self.assertTrue('refresh' in response.data)
 
     def test_signup(self):
+        """
+        Test the endpoint creates a new User with hashed password.
+        """
         sample_data = {
             'first_name': 'some',
             'last_name': 'user',
@@ -250,6 +310,9 @@ class AuthAPITestCase(APITestCase):
         self.assertNotEquals(response.data['password'], sample_data['password'])
 
     def test_refresh(self):
+        """
+        Test the endpoint returns a new access token with by sending refresh token.
+        """
         response_token = self.client.post(
             self.login_url,
             {
