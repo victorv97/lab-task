@@ -41,7 +41,7 @@ class TaskAPITestCase(APITestCase):
         ).data['access']
 
         self.auth_header = 'Bearer ' + self.access_token
-        self.auth_header_fake = 'fake'
+        self.auth_header_fake = self.auth_header + 'fake'
 
     def test_get_task_list(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.auth_header)
@@ -205,3 +205,61 @@ class TaskAPITestCase(APITestCase):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(len(response.data), len(queryset))
+
+
+class AuthAPITestCase(APITestCase):
+    def setUp(self):
+        self.password = 'password123'
+        self.client = APIClient()
+        self.test_user = User.objects.create_user(
+            first_name='test',
+            last_name='user',
+            username='test_auth_user',
+            password=self.password
+        )
+
+        self.login_url = reverse('token_obtain_pair')
+        self.signup_url = reverse('signup')
+        self.refresh_url = reverse('token_refresh')
+
+    def test_login(self):
+        response = self.client.post(
+            self.login_url,
+            {
+                'username': self.test_user.username,
+                'password': self.password
+            }
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('access' in response.data)
+        self.assertTrue('refresh' in response.data)
+
+    def test_signup(self):
+        sample_data = {
+            'first_name': 'some',
+            'last_name': 'user',
+            'username': 'test_some_user',
+            'password': 'password12'
+        }
+        response = self.client.post(self.signup_url, sample_data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['first_name'], sample_data['first_name'])
+        self.assertEqual(response.data['last_name'], sample_data['last_name'])
+        self.assertEqual(response.data['username'], sample_data['username'])
+        self.assertNotEquals(response.data['password'], sample_data['password'])
+
+    def test_refresh(self):
+        response_token = self.client.post(
+            self.login_url,
+            {
+                'username': self.test_user.username,
+                'password': self.password
+            }
+        )
+        refresh_token = {'refresh': response_token.data['refresh']}
+
+        response = self.client.post(self.refresh_url, refresh_token)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('access' in response.data)
+

@@ -108,6 +108,9 @@ def mark_completed_task(request, task_id):
 @api_view(['POST'])
 @permission_classes([AllowAny,])
 def signup(request):
+    """
+    Creates a new user with hashed password and returns user's data
+    """
     serializer = UserSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
