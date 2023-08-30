@@ -42,7 +42,7 @@ Run the tests
 
 # Authorization and authentication
 ___________________________________
-The service uses JWT authentication. To access the API sign up first, then login with username and password to 
+The service uses JWT authentication. To access the API do sign up first. Then log in with username and password to 
 obtain the access and refresh tokens.
 
 ### Signup
@@ -329,4 +329,91 @@ The task can be deleted by the owner only.
     Vary: Accept
     
     "Task 10 successfully deleted"
+
+
+### Filtering and pagination
+
+Such API endpoints as **task-list** and **user-task-list** allow filtering by status.
+
+For example:
+
+ **Request**
+
+    GET /api/task-list/?status=1
+
+ **Response**
+
+    HTTP 200 OK
+    Allow: GET, OPTIONS
+    Content-Type: application/json
+    Vary: Accept
+    
+    [
+        {
+            "id": 5,
+            "title": "sample title 5",
+            "description": "another description 5",
+            "status": 1,
+            "user_id": 1
+        },
+        {
+            "id": 8,
+            "title": "sample title 8",
+            "description": "another description 8",
+            "status": 1,
+            "user_id": 1
+        }
+    ]
+
+
+The API endpoint **task-list** supports pagination. The page size is set to 5 by default
+
+ **Request**
+
+    GET /api/task-list/?page=2
+
+ **Response**
+
+    HTTP 200 OK
+    Allow: GET, OPTIONS
+    Content-Type: application/json
+    Vary: Accept
+    
+    [
+        {
+            "id": 6,
+            "title": "sample title 6",
+            "description": "another description 6",
+            "status": 0,
+            "user_id": 1
+        },
+        {
+            "id": 7,
+            "title": "sample title 7",
+            "description": "another description 7",
+            "status": 0,
+            "user_id": 2
+        },
+        {
+            "id": 8,
+            "title": "sample title 8",
+            "description": "another description 8",
+            "status": 1,
+            "user_id": 1
+        },
+        {
+            "id": 9,
+            "title": "some title 9",
+            "description": "some description 9",
+            "status": 0,
+            "user_id": 5
+        },
+        {
+            "id": 10,
+            "title": "some title 10",
+            "description": "some description 10",
+            "status": 0,
+            "user_id": 1
+        }
+    ]
 
