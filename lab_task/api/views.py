@@ -95,7 +95,7 @@ def mark_completed_task(request, task_id):
     Updates status field of an existing task to COMPLETED by specified id.
     Returns information about the updated task.
     """
-    task = get_object_or_404(Task, id=task_id)
+    task = get_object_or_404(Task, id=task_id, user_id=request.user.id)
     serializer = TaskSerializer(instance=task, data={'status': STATUSES['COMPLETED'][0]}, partial=True)
     if serializer.is_valid():
         serializer.update(instance=task, validated_data=serializer.validated_data)
