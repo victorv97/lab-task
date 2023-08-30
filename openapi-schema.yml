@@ -16,7 +16,19 @@ paths:
             application/json:
               schema:
                 type: array
-                items: {}
+                items:
+                  type: object
+                  properties:
+                    id: 
+                      type: integer
+                    title: 
+                      type: string
+                    description:
+                      type: string
+                    status:
+                      type: integer
+                    user_id:
+                      type: integer
           description: ''
       tags:
       - api
@@ -37,7 +49,21 @@ paths:
         '200':
           content:
             application/json:
-              schema: {}
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: 
+                      type: integer
+                    title: 
+                      type: string
+                    description:
+                      type: string
+                    status:
+                      type: integer
+                    user_id:
+                      type: integer
           description: ''
       tags:
       - api
@@ -50,13 +76,33 @@ paths:
         in: path
         required: true
         description: ''
+        
         schema:
           type: string
+          example: '1'
       responses:
         '200':
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                 id: 
+                   type: integer
+                 title: 
+                   type: string
+                 description:
+                   type: string
+                 status:
+                   type: integer
+                 user_id:
+                   type: integer
+                example: 
+                  id: 1
+                  title: "title"
+                  description: "description"
+                  status: 0
+                  user_id: 1
           description: ''
       tags:
       - api
