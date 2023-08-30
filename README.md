@@ -109,7 +109,7 @@ token if the refresh token is valid.
 
  **Request**
 
-    POST /api/login/
+    POST /api/login/refresh
 
 POST body:
 
