@@ -29,6 +29,13 @@ paths:
                       type: integer
                     user_id:
                       type: integer
+                  example:
+                    id: 1
+                    title: "title"
+                    description: "description"
+                    status: 0
+                    user_id: 1
+                  
           description: ''
       tags:
       - api
@@ -45,6 +52,7 @@ paths:
         description: ''
         schema:
           type: string
+          example: 2
       responses:
         '200':
           content:
@@ -64,6 +72,12 @@ paths:
                       type: integer
                     user_id:
                       type: integer
+                  example:
+                    id: 5
+                    title: "title"
+                    description: "description"
+                    status: 0
+                    user_id: 2
           description: ''
       tags:
       - api
@@ -120,19 +134,35 @@ paths:
         description: ''
         schema:
           type: string
+          example: 1
       requestBody:
         content:
           application/json:
-            schema: {}
-          application/x-www-form-urlencoded:
-            schema: {}
-          multipart/form-data:
-            schema: {}
+            schema: 
+              type: object
       responses:
         '201':
           content:
             application/json:
-              schema: {}
+              schema: 
+                type: object
+                properties:
+                 id: 
+                   type: integer
+                 title: 
+                   type: string
+                 description:
+                   type: string
+                 status:
+                   type: integer
+                 user_id:
+                   type: integer
+                example: 
+                  id: 1
+                  title: "title"
+                  description: "description"
+                  status: 2
+                  user_id: 1
           description: ''
       tags:
       - api
@@ -144,16 +174,45 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: {}
-          application/x-www-form-urlencoded:
-            schema: {}
-          multipart/form-data:
-            schema: {}
+            schema: 
+              type: object
+              properties:
+                 title: 
+                   type: string
+                 description:
+                   type: string
+                 status:
+                   type: integer
+                 user_id:
+                   type: integer
+              example: 
+                  title: "title created"
+                  description: "description created"
+                  status: 1
+                  user_id: 1
       responses:
         '201':
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                 id: 
+                   type: integer
+                 title: 
+                   type: string
+                 description:
+                   type: string
+                 status:
+                   type: integer
+                 user_id:
+                   type: integer
+                example: 
+                  id: 10
+                  title: "title created"
+                  description: "description created"
+                  status: 1
+                  user_id: 1
           description: ''
       tags:
       - api
@@ -171,19 +230,43 @@ paths:
         description: ''
         schema:
           type: string
+          example: 10
       requestBody:
         content:
           application/json:
-            schema: {}
-          application/x-www-form-urlencoded:
-            schema: {}
-          multipart/form-data:
-            schema: {}
+            schema:
+              type: object
+              properties:
+               title: 
+                 type: string
+               description:
+                 type: string
+              example: 
+                  title: "title updated"
+                  description: "description updated"
       responses:
         '201':
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                 id: 
+                   type: integer
+                 title: 
+                   type: string
+                 description:
+                   type: string
+                 status:
+                   type: integer
+                 user_id:
+                   type: integer
+                example: 
+                  id: 10
+                  title: "title updated"
+                  description: "description updated"
+                  status: 1
+                  user_id: 1
           description: ''
       tags:
       - api
@@ -195,16 +278,45 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: {}
-          application/x-www-form-urlencoded:
-            schema: {}
-          multipart/form-data:
-            schema: {}
+            schema:
+              type: object
+              properties:
+                first_name: 
+                  type: string
+                last_name:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+              example: 
+                first_name: "new"
+                last_name: "user"
+                username: "new_user"
+                password: 'password'
       responses:
         '201':
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  first_name: 
+                    type: string
+                  last_name:
+                    type: string
+                  username:
+                    type: string
+                  password:
+                    type: string
+                example: 
+                  id: 2
+                  first_name: "new"
+                  last_name: "user"
+                  username: "new_user"
+                  password: 'pbkdf2_sha256$600000$8xWZcNVr6UvA3bB8OILiLP$6cIyaPpzDJWJhnC6ilQRSMOKeyXV....'
           description: ''
       tags:
       - api
@@ -220,7 +332,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              example: 
+                username: "new_user"
+                password: "password"
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/TokenObtainPair'
@@ -228,11 +348,19 @@ paths:
             schema:
               $ref: '#/components/schemas/TokenObtainPair'
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TokenObtainPair'
+                type: object
+                properties:
+                  refresh:
+                    type: string
+                  access:
+                    type: string
+                example: 
+                  refresh: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY5NTk5MDQ5OSwiaWF0IjoxNjkzMzk4NDk5LCJqdGkiOiJlY2JmNmZiNGY1MGQ0MmUwOTY4YmQ4OWViYmNiOTMzMiIsInVzZXJfaWQiOjl9.nqCAvDcF7STbzTuhOFGhf1HpmsFb4Zxw_uQrh2obnv0"
+                  access: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzNDg0ODk5LCJpYXQiOjE2OTMzOTg0OTksImp0aSI6IjVhMzRlMWU3ZTYxMjRhNTc5M2NhMzczYzFjZDBiNWQzIiwidXNlcl9pZCI6OX0.yWs3J1VtDbXdjBoHWd5ujb7s8nrIZdeIQYA_Y8AmsHc"
           description: ''
       tags:
       - api
@@ -248,7 +376,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              type: object
+              properties:
+                refresh:
+                  type: string
+              example: 
+                refresh: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY5NTk5MDQ5OSwiaWF0IjoxNjkzMzk4NDk5LCJqdGkiOiJlY2JmNmZiNGY1MGQ0MmUwOTY4YmQ4OWViYmNiOTMzMiIsInVzZXJfaWQiOjl9.nqCAvDcF7STbzTuhOFGhf1HpmsFb4Zxw_uQrh2obnv0"
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/TokenRefresh'
@@ -260,7 +393,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TokenRefresh'
+                type: object
+                properties:
+                  access:
+                    type: string
+                example: 
+                  access: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzNDg1MTI2LCJpYXQiOjE2OTMzOTg0OTksImp0aSI6IjQ2Y2FhYWM3NDc2NjQ4MDQ5Y2ZlMjFlMjgyMDQyZjg1IiwidXNlcl9pZCI6OX0.4eQXfzbNCQYhokFxz5DtjFNR0QQjFJB0eTg1X8kv7Lc"
           description: ''
       tags:
       - api
@@ -276,8 +414,14 @@ paths:
         description: ''
         schema:
           type: string
+          example: 10
       responses:
-        '204':
+        '200':
+          content:
+            application/json:
+              schema: 
+                type: string
+                example: "Task 10 successfully deleted"
           description: ''
       tags:
       - api
